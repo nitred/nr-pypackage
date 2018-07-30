@@ -1,0 +1,1 @@
+source activate nr-pypackage-env
