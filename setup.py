@@ -1,7 +1,8 @@
 import re
-from os import path
 from codecs import open  # To use a consistent encoding
-from setuptools import setup, find_packages
+from os import path
+
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 
@@ -31,11 +32,16 @@ setup(
     include_package_data=True,
     install_requires=install_requires,
     setup_requires=['pytest-runner'],
+    entry_points={
+        'console_scripts': [
+            'pypackage-cli = nr_pypackage.cli_main:main',
+        ],
+    },
     tests_require=test_requires,
     packages=find_packages(),
     zip_safe=False,
     author="Nitish Reddy Koripalli",
-    author_email = "nitish.k.reddy@gmail.com",
+    author_email="nitish.k.reddy@gmail.com",
     download_url="github.com/nitred/{}.tar.gz".format(get_version()),
     classifiers=[
         "Programming Language :: Python :: 2",
