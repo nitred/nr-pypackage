@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.1.1 - 2018-08-01
+### Added
+- README.rst to gitignore
+
+### Removed
+- Removed Download URL from setup.py (in templates as well)
+
+### Fixed
+- Makefile upload_pypi script from testpypi to pypi
+
 
 ## 0.1.0 - 2018-08-01
 ### Added
