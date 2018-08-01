@@ -1,2 +1,2 @@
 include README.md
-inlcude nr_pypackages/templates/*
+recursive-include nr_pypackage/templates *

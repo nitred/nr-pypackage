@@ -23,7 +23,7 @@ This repository is Python 2 & 3 compatible.
 
 ## Current Stable Version
 ```
-0.1.1
+0.1.2
 ```
 
 ## Installation

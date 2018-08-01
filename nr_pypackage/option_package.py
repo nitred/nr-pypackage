@@ -23,8 +23,10 @@ def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_us
 
 
 def render_template(template_filename, **template_kwargs):
-    with open(template_filename, 'r') as f:
-        template = Template(f.read())
+    """Render template from filename based on keywords."""
+    # print("render_template: {}".format(template_filename))
+    with open(template_filename, 'rb') as f:
+        template = Template(f.read().decode('utf-8'))
 
     return template.render(**template_kwargs)
 
@@ -53,6 +55,18 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
     for root, dirs, files in os.walk(TEMPLATES_DIR):
         for filename in files:
             file_path_template = os.path.join(root, filename)                                            # File path, within templates
+
+            # Special rules.
+            # NOTE 1: Ignore __pycache__ dir if you find it.
+            if '__pycache__' in file_path_template:
+                # print("IGNORING __pycache__: {}".format(file_path_template))
+                continue
+
+            # NOTE 2: Ignore __pycache__ dir if you find it.
+            if file_path_template.endswith(".pyc"):
+                # print("IGNORING __pycache__: {}".format(file_path_template))
+                continue
+
             file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)                      # File path, relative within templates
             file_path_package = os.path.abspath(os.path.join(PACKAGE_DIR, file_path_relative))           # File path, within package
             rendered_file = render_template(file_path_template, **template_kwargs)
@@ -60,7 +74,8 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
             assert os.path.isfile(file_path_template), ("Template file {file_path_template} must be a FILE but is not."
                                                         .format(file_path_template=file_path_template))
 
-            # Special filenames.
+            # Special rules.
+            # NOTE 3: Replace the folder name 'PACKAGE_NAME_SAFE' with the actual 'package_name_safe'
             file_path_package = file_path_package.replace("PACKAGE_NAME_SAFE", template_kwargs.get('package_name_safe',
                                                                                                    'PACKAGE_NAME_SAFE'))
 
@@ -100,8 +115,8 @@ def create_package(package_name, author_name, author_email, scm_url, scm_usernam
                 os.makedirs(os.path.dirname(package_filename))
 
             print("Creating file: {package_filename}".format(package_filename=package_filename))
-            with open(package_filename, 'w') as f:
-                f.write(rendered_file)
+            with open(package_filename, 'wb') as f:
+                f.write(rendered_file.encode('utf-8'))
         else:
             print("(DRY-RUN) Creating file: {package_filename}".format(package_filename=package_name))
 
