@@ -38,7 +38,7 @@ setup(
     zip_safe=False,
     author="{{ author_name }}",
     author_email="{{ author_email }}",
-    download_url="{{ scm_url }}/{{ scm_username }}/{}.tar.gz".format(get_version()),
+    # download_url="{{ scm_url }}/{{ scm_username }}/{{ package_name }}/archive/{}.tar.gz".format(get_version()),
     classifiers=[
         "Programming Language :: Python :: 3.6", ]
 )

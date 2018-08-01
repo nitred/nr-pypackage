@@ -42,7 +42,7 @@ setup(
     zip_safe=False,
     author="Nitish Reddy Koripalli",
     author_email="nitish.k.reddy@gmail.com",
-    download_url="github.com/nitred/{}.tar.gz".format(get_version()),
+    # download_url="github.com/nitred/nr-pypackage-{}.tar.gz".format(get_version()),
     classifiers=[
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
