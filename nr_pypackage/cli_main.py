@@ -28,7 +28,7 @@ Please choose the option you want from above. Use the option number (i.e. 1 or 2
 
 
 @click.command()
-@click.option('--template_type', type=int, prompt=f'{main_doc}', help='The person to greet.', )
+@click.option('--template_type', type=int, prompt='{}'.format(main_doc), help='The person to greet.', )
 def main(template_type):
     """Main CLI entrypoint."""
     if template_type == 1:

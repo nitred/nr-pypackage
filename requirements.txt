@@ -1,2 +1,2 @@
-git+https://github.com/ansrivas/pylogging.git
 Jinja2
+click

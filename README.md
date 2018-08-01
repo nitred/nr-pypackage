@@ -19,15 +19,17 @@ Current Features Include:
   * Easy pip installation with a cli
   * Basic python package creation
 
+This repository is Python 2 & 3 compatible.
 
 ## Current Stable Version
 ```
 0.1.0
 ```
+
 ## Installation
 ### pip
 ```
-pip install nr-pypackage
+pip install nr-pypackage --user
 ```
 
 ### Development Installation
@@ -49,11 +51,9 @@ make test
 ```
 
 ## Usage
-
-
-## Examples
+After installing via Pip, run the following command and follow the instructions.
 ```
-$ python examples/simple.py
+nr-pypackage-cli
 ```
 
 ## License
