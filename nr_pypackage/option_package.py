@@ -24,7 +24,7 @@ def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_us
 
 def render_template(template_filename, **template_kwargs):
     """Render template from filename based on keywords."""
-    print("render_template: {}".format(template_filename))
+    # print("render_template: {}".format(template_filename))
     with open(template_filename, 'rb') as f:
         template = Template(f.read().decode('utf-8'))
 
@@ -59,7 +59,12 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
             # Special rules.
             # NOTE 1: Ignore __pycache__ dir if you find it.
             if '__pycache__' in file_path_template:
-                print("IGNORING __pycache__: {}".format(file_path_template))
+                # print("IGNORING __pycache__: {}".format(file_path_template))
+                continue
+
+            # NOTE 2: Ignore __pycache__ dir if you find it.
+            if file_path_template.endswith(".pyc"):
+                # print("IGNORING __pycache__: {}".format(file_path_template))
                 continue
 
             file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)                      # File path, relative within templates
@@ -70,7 +75,7 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
                                                         .format(file_path_template=file_path_template))
 
             # Special rules.
-            # NOTE 2: Replace the folder name 'PACKAGE_NAME_SAFE' with the actual 'package_name_safe'
+            # NOTE 3: Replace the folder name 'PACKAGE_NAME_SAFE' with the actual 'package_name_safe'
             file_path_package = file_path_package.replace("PACKAGE_NAME_SAFE", template_kwargs.get('package_name_safe',
                                                                                                    'PACKAGE_NAME_SAFE'))
 
