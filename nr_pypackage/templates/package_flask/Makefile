@@ -21,18 +21,21 @@ readme_to_rst:
 .PHONY : upload_test_pypi
 upload_test_pypi: ## Build and upload distribution to testpypi server
 upload_test_pypi: readme_to_rst
-	python setup.py sdist && \
-	python setup.py bdist_wheel --universal --dist-dir dist && \
+	python setup.py bdist_wheel --dist-dir dist && \
 	twine upload --skip-existing --repository testpypi dist/*
 
 .PHONY : upload_pypi
 upload_pypi:      ## Build and upload distribution to pypi server
 upload_pypi: readme_to_rst
-	python setup.py sdist && \
-	python setup.py bdist_wheel --universal --dist-dir dist && \
+	python setup.py bdist_wheel --dist-dir dist && \
 	twine upload --skip-existing --repository pypi dist/*
 
 .PHONY : lint
 lint:             ## Run flake8 linter
 lint:
 	flake8 nr_pypackage
+
+.PHONY : run_server
+run_server:             ## Run flake8 linter
+run_server:
+	gunicorn --workers=1 -b 0.0.0.0:8080 --log-level DEBUG --worker-class gevent "{{ package_name_safe }}.service.server:create_app(config_filename='config/config.yaml')"
