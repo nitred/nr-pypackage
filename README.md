@@ -17,19 +17,20 @@ The scope of this project is as follows:
 
 Current Features Include:
   * Easy pip installation with a cli
-  * Basic python package creation
+  * Creating a python package: Simple version
+  * Creating a python package: Flask version
 
 This repository is Python 2 & 3 compatible.
 
 ## Current Stable Version
 ```
-0.1.2
+0.1.4
 ```
 
 ## Installation
 ### pip
 ```
-pip install nr-pypackage --user
+pip install nr-pypackage --user --upgrade
 ```
 
 ### Development Installation

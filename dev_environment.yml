@@ -2,8 +2,7 @@ name: nr-pypackage
 channels:
   - defaults
 dependencies:
-- python=2.7
-# - python=3.6
+- python=3.6
 - pip:
   - flake8
   - autopep8
