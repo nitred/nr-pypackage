@@ -10,21 +10,12 @@ main_doc = """
 --------------------------------------------------------------------------------
                              NR-PYPACKAGE
 --------------------------------------------------------------------------------
-This project is about creating standardized python projects, packages
-and modules.
+What do you want to create?
+[1] python package: simple
+[2] python package: flask
+[3] python module : Coming Soon!
 
-We provide standardized template options for the following use cases:
-
-[1] python package
-    Choose this if you would like to create an entire python package.
-
-[2] python modules
-    Choose this if you would like to create specific python modules within your
-    pre-existing python package. This creates a python submodule in the current
-    directory.
-
-Please choose the option you want from above. Use the option number (i.e. 1 or 2):
-"""
+Enter the option number"""
 
 
 @click.command()
@@ -32,7 +23,13 @@ Please choose the option you want from above. Use the option number (i.e. 1 or 2
 def main(template_type):
     """Main CLI entrypoint."""
     if template_type == 1:
-        cli_package.main()
+        package_type = 'package_simple'
+        cli_package.main(package_type)
+    elif template_type == 2:
+        package_type = 'package_flask'
+        cli_package.main(package_type)
+    else:
+        print("Other options, coming soon!")
 
 
 if __name__ == '__main__':

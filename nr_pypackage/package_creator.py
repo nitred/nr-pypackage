@@ -3,8 +3,11 @@ import os
 import sys
 
 import pkg_resources
-from jinja2 import Template
 from setuptools.package_index import safe_name
+
+from jinja2 import Template
+
+RENDER_EXPEMPT_EXTENSIONS = ['html', 'css']
 
 
 def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username):
@@ -22,16 +25,29 @@ def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_us
     }
 
 
+def is_file_render_exempt(template_filename):
+    """Return boolean to indicate if file should be rendered or not."""
+    for render_expempt_extension in RENDER_EXPEMPT_EXTENSIONS:
+        # If filename ends with render exempt extension.
+        if template_filename.endswith(render_expempt_extension):
+            return True
+
+    return False
+
+
 def render_template(template_filename, **template_kwargs):
     """Render template from filename based on keywords."""
     # print("render_template: {}".format(template_filename))
     with open(template_filename, 'rb') as f:
-        template = Template(f.read().decode('utf-8'))
+        file_contents = f.read().decode('utf-8')
 
-    return template.render(**template_kwargs)
+    if is_file_render_exempt(template_filename):
+        return file_contents
+    else:
+        return Template(file_contents).render(**template_kwargs)
 
 
-def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_kwargs):
+def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_type, template_kwargs):
     """Get generator of tuples consisting of rendered templates and filename to write to.
 
     How this works:
@@ -47,14 +63,16 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
             template.
 
     Returns:
-        generator of tuples (str, str): Generator of tuple of two strings. First string is the rendered template and the
-            second string is the path to which to write the rendered template.
+        generator of tuples (str, str): (template_filename, template_rendered)
+            Generator of tuple of two strings. First string is the path to which to write the rendered template
+            and second is the rendered template.
     """
-    TEMPLATES_DIR = pkg_resources.resource_filename('nr_pypackage', 'templates')
+    TEMPLATES_DIR = pkg_resources.resource_filename('nr_pypackage', 'templates/{}'.format(package_type))
 
     for root, dirs, files in os.walk(TEMPLATES_DIR):
         for filename in files:
-            file_path_template = os.path.join(root, filename)                                            # File path, within templates
+            # File path, within templates
+            file_path_template = os.path.join(root, filename)
 
             # Special rules.
             # NOTE 1: Ignore __pycache__ dir if you find it.
@@ -67,8 +85,10 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
                 # print("IGNORING __pycache__: {}".format(file_path_template))
                 continue
 
-            file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)                      # File path, relative within templates
-            file_path_package = os.path.abspath(os.path.join(PACKAGE_DIR, file_path_relative))           # File path, within package
+            # File path, relative within templates
+            file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)
+            # File path, within package
+            file_path_package = os.path.abspath(os.path.join(PACKAGE_DIR, file_path_relative))
             rendered_file = render_template(file_path_template, **template_kwargs)
 
             assert os.path.isfile(file_path_template), ("Template file {file_path_template} must be a FILE but is not."
@@ -82,7 +102,7 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_k
             yield (file_path_package, rendered_file)
 
 
-def create_package(package_name, author_name, author_email, scm_url, scm_username, dry_run):
+def create_package(package_type, package_name, author_name, author_email, scm_url, scm_username, dry_run):
     """Create the python package from the provided details.
 
     Here is the pipeline for creating the package:
@@ -107,7 +127,10 @@ def create_package(package_name, author_name, author_email, scm_url, scm_usernam
     template_kwargs = get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username)
 
     # RENDER TEMPLATES & WRITE THEM
-    for package_filename, rendered_file in get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, template_kwargs):
+    for package_filename, rendered_file in get_generator_of_template_filenames_and_renders(CWD,
+                                                                                           PACKAGE_DIR,
+                                                                                           package_type,
+                                                                                           template_kwargs):
         # Create file.
         if dry_run is False:
             # Create directories for the file.
@@ -118,7 +141,7 @@ def create_package(package_name, author_name, author_email, scm_url, scm_usernam
             with open(package_filename, 'wb') as f:
                 f.write(rendered_file.encode('utf-8'))
         else:
-            print("(DRY-RUN) Creating file: {package_filename}".format(package_filename=package_name))
+            print("(DRY-RUN) Creating file: {package_filename}".format(package_filename=package_filename))
 
     # STARTING GIT
     if dry_run is False:

@@ -1,0 +1,25 @@
+{% extends "base_template.html" %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <div>
+        {% if url_for_back %}
+          <form action="{{ url_for_back }}">
+            <input type="submit" value="Back" style="background-color: #696969;">
+          </form>
+        {% endif %}
+
+
+        <h4>{{ page_heading }}</h4>
+
+        {% for sub_page in sub_pages %}
+            <form action="{{ sub_page.url }}">
+                <input class='outline' type="submit" value="{{ sub_page.label }}"/>
+            </form>
+        {% endfor %}
+
+    </div>
+{% endblock %}

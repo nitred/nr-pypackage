@@ -1,0 +1,4 @@
+Flask
+nr-common
+gunicorn
+gevent
