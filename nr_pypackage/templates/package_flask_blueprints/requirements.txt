@@ -1,0 +1,12 @@
+Flask
+{% if blueprints['auth']['include'] %}
+Flask-Login
+Flask-Session
+Flask-WTF
+redis
+ldap3
+docker-compose
+{% endif %}
+nr-common
+gunicorn
+gevent

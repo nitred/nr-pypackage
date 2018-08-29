@@ -1,0 +1,5 @@
+flask:
+  {% if blueprints['auth']['include'] %}
+  SECRET_KEY: "very-secret-password"
+  SESSION_TYPE: "redis"
+  {% endif %}

@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  {% if blueprints['auth']['include'] %}
+  {{ package_name }}-redis-s:
+    image: redis:latest
+    container_name: {{ package_name }}-redis-c
+    ports:
+      - '6379:6379'
+    networks:
+      - {{ package_name }}-n
+  {% endif %}
+
+networks:
+  {{ package_name }}-n:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.25.123.0/24

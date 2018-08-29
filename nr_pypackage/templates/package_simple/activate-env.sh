@@ -1,1 +1,1 @@
-source activate {{ package_name }}-env
+source activate {{ package_name }}

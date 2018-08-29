@@ -1,0 +1,49 @@
+{% extends "base_template.html" %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+    <div style="width: 25%;">
+
+        {% block body_navbar %}
+        <div style="float: left;">
+
+            {% if url_for_logout %}
+            <div style="width: 130px; float: left;">
+                  <form action="{{ url_for_logout }}">
+                      <input type="submit" value="Logout" style="background-color: #696969;">
+                  </form>
+            </div>
+            {% endif %}
+
+            {% if url_for_back %}
+            <div style="float: left;">
+                <form action="{{ url_for_back }}">
+                    <input type="submit" value="Back" style="background-color: #696969;">
+                </form>
+            </div>
+            {% endif %}
+
+        </div>
+        {% endblock %}
+
+
+        <div style="position: absolute; margin-top: 50px;">
+            {% block body_form %}
+
+            <h4>{{ page_heading }}</h4>
+
+            {% for sub_page in sub_pages %}
+                <form action="{{ sub_page.url }}">
+                      <input class='outline' type="submit" value="{{ sub_page.label }}"/>
+                </form>
+            {% endfor %}
+
+            {% endblock %}
+
+        </div>
+
+    </div>
+{% endblock %}

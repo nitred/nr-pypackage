@@ -3,14 +3,13 @@ import os
 import sys
 
 import pkg_resources
-from setuptools.package_index import safe_name
-
 from jinja2 import Template
+from setuptools.package_index import safe_name
 
 RENDER_EXPEMPT_EXTENSIONS = ['html', 'css']
 
 
-def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username):
+def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username, blueprints):
     """Get template kwargs for python package options from the arguments."""
     package_name = safe_name(package_name)
     package_name_safe = package_name.replace("-", "_")
@@ -22,6 +21,7 @@ def get_template_kwargs(package_name, author_name, author_email, scm_url, scm_us
         'author_email': author_email,
         'scm_url': scm_url,
         'scm_username': scm_username,
+        'blueprints': blueprints
     }
 
 
@@ -44,7 +44,7 @@ def render_template(template_filename, **template_kwargs):
     if is_file_render_exempt(template_filename):
         return file_contents
     else:
-        return Template(file_contents).render(**template_kwargs)
+        return Template(file_contents, trim_blocks=True, lstrip_blocks=True).render(**template_kwargs)
 
 
 def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_type, template_kwargs):
@@ -77,13 +77,17 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_ty
             # Special rules.
             # NOTE 1: Ignore __pycache__ dir if you find it.
             if '__pycache__' in file_path_template:
-                # print("IGNORING __pycache__: {}".format(file_path_template))
                 continue
 
-            # NOTE 2: Ignore __pycache__ dir if you find it.
+            # NOTE 2: Ignore .pyc files if you find it.
             if file_path_template.endswith(".pyc"):
-                # print("IGNORING __pycache__: {}".format(file_path_template))
                 continue
+
+            # NOTE 3: Ignore blueprints that are not included.
+            for blueprint_name, blueprint_kwargs in template_kwargs.get('blueprints', {}).items():
+                if "/blueprints/{}/".format(blueprint_name) in file_path_template and blueprint_kwargs['include'] is not True:
+                    print("IGNORING BLUEPRINT: {}".format(file_path_template))
+                    continue
 
             # File path, relative within templates
             file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)
@@ -102,7 +106,7 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_ty
             yield (file_path_package, rendered_file)
 
 
-def create_package(package_type, package_name, author_name, author_email, scm_url, scm_username, dry_run):
+def create_package(package_type, package_name, author_name, author_email, scm_url, scm_username, dry_run, blueprints=None):
     """Create the python package from the provided details.
 
     Here is the pipeline for creating the package:
@@ -111,6 +115,9 @@ def create_package(package_type, package_name, author_name, author_email, scm_ur
       - Render all templates
       - Create package directory
       - Create all templates into package directory
+
+    Special:
+      - If blueprints don't exist, then just give an empty dictionary.
     """
     # GET STUFF
     CWD = os.path.abspath("./")
@@ -124,7 +131,8 @@ def create_package(package_type, package_name, author_name, author_email, scm_ur
         sys.exit(0)
 
     # GET TEMPLATE KWARGS
-    template_kwargs = get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username)
+    blueprints = {} if blueprints is None else blueprints
+    template_kwargs = get_template_kwargs(package_name, author_name, author_email, scm_url, scm_username, blueprints)
 
     # RENDER TEMPLATES & WRITE THEM
     for package_filename, rendered_file in get_generator_of_template_filenames_and_renders(CWD,

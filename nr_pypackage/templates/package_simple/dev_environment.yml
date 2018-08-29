@@ -1,4 +1,4 @@
-name: {{ package_name }}-env
+name: {{ package_name }}
 channels:
   - defaults
 dependencies:
