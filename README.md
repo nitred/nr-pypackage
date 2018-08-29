@@ -17,14 +17,15 @@ The scope of this project is as follows:
 
 Current Features Include:
   * Easy pip installation with a cli
-  * Creating a python package: Simple version
-  * Creating a python package: Flask version
+  * Creating a python package: Simple support
+  * Creating a python package: Flask support
+  * Creating a python package: Flask with Blueprints support
 
 This repository is Python 2 & 3 compatible.
 
 ## Current Stable Version
 ```
-0.1.4
+0.2.0
 ```
 
 ## Installation

@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2.0 - 2018-08-29
+### Added
+- package-flask-blueprints template type
+- added auth (for ldap authentication) blueprint
+- added redis in docker-compose for auth blueprint (for flask-session)
+- added nav-bar in navigation-template that supports logout and back buttons
+
+
 ## 0.1.2 - 2018-08-01
 ### Added
 - Ignoring `__pycache__` dir in templates
