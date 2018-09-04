@@ -1,1 +1,5 @@
 include README.md
+recursive-include {{ package_name_safe }} *.html
+recursive-include {{ package_name_safe }} *.css
+global-exclude __pycache__
+global-exclude *.py[co]

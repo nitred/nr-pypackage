@@ -1,0 +1,34 @@
+config_filename: config/config.yaml
+
+flask:
+  SECRET_KEY: "super-secret-password"
+
+  {% if blueprints['auth']['include'] %}
+  SESSION_TYPE: redis
+
+  # deps
+  SESSION_REDIS_HOST: localhost
+  SESSION_REDIS_PORT: 6379
+  # # dev
+  # SESSION_REDIS_HOST: pycassizer-peek-dev-redis-s
+  # SESSION_REDIS_PORT: 6379
+  # # prod
+  # SESSION_REDIS_HOST: pycassizer-peek-redis-s
+  # SESSION_REDIS_PORT: 6379
+
+  {% endif %}
+  {% if blueprints['database']['include'] %}
+  # deps
+  SQLALCHEMY_DATABASE_URI: 'postgresql+psycopg2://postgres:postgres@localhost:5433/{{ package_name_safe }}'
+  # # dev/prod
+  # SQLALCHEMY_DATABASE_URI: 'postgresql+psycopg2://postgres:postgres@{{ package_name_safe }}-postgres-s:5432/{{ package_name_safe }}'
+
+  {% endif %}
+
+services:
+  {% for table_name, table_details in blueprints['database'].get('tables', {}).items() %}
+  {{ table_details.table_name_lower }}:
+    permitted_users:
+      - admin
+
+  {% endfor %}

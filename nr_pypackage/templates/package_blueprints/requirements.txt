@@ -1,0 +1,19 @@
+future
+Flask
+Flask-restful
+{% if blueprints['auth']['include'] %}
+Flask-Login
+Flask-Session
+Flask-WTF
+redis
+ldap3
+{% endif %}
+{% if blueprints['database']['include'] %}
+Flask-SQLAlchemy
+psycopg2
+pandas
+{% endif %}
+nr-common
+gunicorn
+gevent
+docker-compose

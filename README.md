@@ -1,6 +1,4 @@
 # About
-[![Build Status](https://travis-ci.org/nitred/nr-pypackage.svg?branch=master)](https://travis-ci.org/nitred/nr-pypackage)
-
 This project is about creating standardized python projects. We provide standard templates for multiple types of python projects. It is intended to be replicate most features from [ansrivas/protemplates](https://github.com/ansrivas/protemplates) and this project was created using that library.
 
 The scope of this project is as follows:
@@ -21,17 +19,17 @@ Current Features Include:
   * Creating a python package: Flask support
   * Creating a python package: Flask with Blueprints support
 
-This repository is Python 2 & 3 compatible.
+This repository is Python 3 compatible only.
 
 ## Current Stable Version
 ```
-0.2.0
+0.3.0.rc3
 ```
 
 ## Installation
 ### pip
 ```
-pip install nr-pypackage --user --upgrade
+pip install nr-pypackage==0.3.0.rc3 --user --upgrade
 ```
 
 ### Development Installation

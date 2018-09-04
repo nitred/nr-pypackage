@@ -13,15 +13,26 @@ def create_app_without_blueprints(config):
     return app
 
 
-def register_app_config(app, config):
+def register_config(app, config):
     """Register config."""
+    # The `app_config` contains the entire config of the application (not restricted to Flask alone).
+    # This `app_config` is accessible from the `current_app.config['app_config']` from within the blueprints.
     app.config['app_config'] = config
+
+    # We expect a section/key called `flask` in the config to contain all FLASK OPTIONS
+    app.config.update(config.get('flask', {}))
+
+
+def register_extensions(app, config):
+    """Register extensions."""
+    # Template
+    # from {{package_name_safe}}.service.blueprints.something import something_manager
+    # something_manager.init_app(app)
 
 
 def register_blueprints(app, config):
     """Initialize blueprints."""
-    from {{ package_name_safe }}.service.blueprints.landing import landing_handler
-
+    from {{package_name_safe}}.service.blueprints.landing import landing_handler
     app.register_blueprint(landing_handler, url_prefix="/landing")
 
 
@@ -38,7 +49,8 @@ def create_app(config_filename):
     """Configure the app w.r.t. Flask security, databases, loggers."""
     config = read_config(config_filename)
     app = create_app_without_blueprints(config)
-    register_app_config(app, config)
+    register_config(app, config)
+    register_extensions(app, config)
     register_blueprints(app, config)
     register_routes(app, config)
     return app

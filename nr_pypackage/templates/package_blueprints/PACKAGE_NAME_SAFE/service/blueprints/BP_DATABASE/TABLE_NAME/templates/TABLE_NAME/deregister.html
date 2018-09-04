@@ -1,0 +1,21 @@
+{% raw %}
+{% extends "navigation_template.html" %}
+
+{% block body_form %}
+    <h4>{{ page_heading }}</h4>
+    <form action="{{ url_for_endpoint }}" enctype="multipart/form-data" method="post">
+{% endraw %}
+        {{ current_table_name }} id (type: {{ blueprints['database']['current_table'].column_details['id'].type }})
+{% raw %}
+        <input type="text" name="id" value="{{ id }}" style="width: 94%">
+
+        <input type="hidden" name="submitted" value="submitted">
+        <input type="submit">
+    </form>
+{% endblock %}
+
+
+{% block body_data1 %}
+    {{ df_html }}
+{% endblock %}
+{% endraw %}

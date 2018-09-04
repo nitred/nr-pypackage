@@ -18,7 +18,11 @@ def get_version():
                          version_file.read()).group('version')
 
 
-install_requires = ['future', 'Jinja2', 'click']
+install_requires = ['future',
+                    'Jinja2>=2.10',
+                    'click>=7.0',
+                    'prompt_toolkit>=2.0.5',
+                    'python-box>=3.2.0']
 
 
 test_requires = ['pytest', 'pytest-sugar', 'pytest-asyncio', 'pytest-cov', ]
