@@ -23,6 +23,13 @@ def register_config(app, config):
     app.config.update(config.get('flask', {}))
 
 
+def register_extensions(app, config):
+    """Register extensions."""
+    # Template
+    # from {{package_name_safe}}.service.blueprints.something import something_manager
+    # something_manager.init_app(app)
+
+
 def register_blueprints(app, config):
     """Initialize blueprints."""
     from {{package_name_safe}}.service.blueprints.landing import landing_handler
@@ -43,6 +50,7 @@ def create_app(config_filename):
     config = read_config(config_filename)
     app = create_app_without_blueprints(config)
     register_config(app, config)
+    register_extensions(app, config)
     register_blueprints(app, config)
     register_routes(app, config)
     return app
