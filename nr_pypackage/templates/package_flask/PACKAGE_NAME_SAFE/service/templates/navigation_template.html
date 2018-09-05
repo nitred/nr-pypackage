@@ -5,21 +5,53 @@
 {% endblock %}
 
 {% block body %}
-    <div>
-        {% if url_for_back %}
-          <form action="{{ url_for_back }}">
-            <input type="submit" value="Back" style="background-color: #696969;">
-          </form>
-        {% endif %}
-
-
-        <h4>{{ page_heading }}</h4>
-
-        {% for sub_page in sub_pages %}
-            <form action="{{ sub_page.url }}">
-                <input class='outline' type="submit" value="{{ sub_page.label }}"/>
-            </form>
-        {% endfor %}
-
+    <div style="display: flex; flex-direction: row; width: 100%">
+        <div style="display: flex; flex-direction: column; width: 33%;">
+            {% block body_navbar %}
+            <div style="display: flex; flex-direction: row; height: 40px;">
+                  {% if url_for_logout %}
+                  <div>
+                      <form action="{{ url_for_logout }}">
+                          <input type="submit" value="Logout" style="background-color: #696969;">
+                      </form>
+                  </div>
+                  {% endif %}
+                  {% if url_for_back %}
+                  <div>
+                      <form action="{{ url_for_back }}">
+                          <input type="submit" value="Back" style="background-color: #696969;">
+                      </form>
+                  </div>
+                  {% endif %}
+            </div>
+            {% endblock %}
+            <div>
+                {% block body_form %}
+                <h4>{{ page_heading }}</h4>
+                {% for sub_page in sub_pages %}
+                <form action="{{ sub_page.url }}">
+                      <input class='outline' type="submit" value="{{ sub_page.label }}"/>
+                </form>
+                {% endfor %}
+                {% endblock %}
+            </div>
+            <div>
+                {% block body_flash %}
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
+                {% endwith %}
+                {% endblock %}
+            </div>
+        </div>
+        <div style="width: 33%;">
+        </div>
+        <div style="width: 33%;">
+        </div>
     </div>
 {% endblock %}
