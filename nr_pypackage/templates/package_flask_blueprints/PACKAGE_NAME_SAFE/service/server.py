@@ -56,10 +56,8 @@ def register_routes(app, config):
     """Register routes to landing page."""
     @app.route("/")
     {% if blueprints['auth']['include'] %}
-
     @login_required
     {% endif %}
-
     def index():
         return redirect(url_for('landing.index'))
 

@@ -7,35 +7,43 @@ from prompt_toolkit.key_binding.bindings.focus import focus_next, focus_previous
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.application.current import get_app
-
-from . import cli_package
 import sys
 
+from .blueprint_auth import handle_auth
+from .blueprint_database import handle_database
 
-main_doc = """
+blueprint_handlers = {
+    'auth': handle_auth,
+    'database': handle_database,
+}
+
+
+blueprints_doc = """
 --------------------------------------------------------------------------------
-                             NR-PYPACKAGE
+                          NR-PYPACKAGE-BLUEPRINTS
 --------------------------------------------------------------------------------
 """
 
 
-def main():
+def handle_blueprints():
     """Entrypoint for first interaction with user. Ask user to choose type of pypackage.
 
     NOTE: We're using python-prompt-toolkit which is both powerful and complicated, so we try to document its use asmuch as possible.
     """
     ############################################################################
-    # LIST OF APPLICATIONS
+    # LIST OF BLUEPRINTS
     ############################################################################
-    # Here we list out all possible applications we have that will be presented
-    # as radio buttons.
-    package_radios = RadioList(values=[
-        # Tuple format:
-        # ("Why is this used?, This is presented to the user.")
-        ('package_simple', 'Simple Python App'),
-        ('package_flask', 'Simple Flask App'),
-        ('package_blueprints', 'Flask Blueprints App'),
-    ])
+    # Here we list out all possible blueprints we have that will be presented
+    # as checkboxes.
+    blueprint_order = ['auth', 'database']
+    blueprints = {
+        'auth': Checkbox(text='Authentication against LDAP'),
+        'database': Checkbox(text='Databases'),
+    }
+    blueprint_checkboxes = []
+    for bp in blueprint_order:
+        blueprints[bp].checked = False
+        blueprint_checkboxes.append(blueprints[bp])
 
     ############################################################################
     # KEY BINDINGS
@@ -44,7 +52,9 @@ def main():
     # * radio buttons use inbuilt key-bindings of up and down arrows for focus and enter for selection.
     # * tab and shift tab bindings to shift focus from one frame to the next.
     bindings = KeyBindings()
+    bindings.add(Keys.Down)(focus_next)
     bindings.add(Keys.Tab)(focus_next)
+    bindings.add(Keys.Up)(focus_previous)
     bindings.add(Keys.BackTab)(focus_previous)
 
     # CTRL-C to quit the prompt-app.
@@ -55,15 +65,15 @@ def main():
 
     # End App.
     def exit_app():
-        get_app().exit(True)
+        get_app().exit(result=True)
 
     ############################################################################
     # Actually application container.
     ############################################################################
     # We use VSplit to not utilize the entire width of the window.
     root_container = VSplit([
-        HSplit([Frame(title='Choose which package-type do you want?',
-                      body=package_radios,
+        HSplit([Frame(title='Choose which blueprints do you want?',
+                      body=HSplit(children=blueprint_checkboxes),
                       width=80),
                 Button('Done',
                        handler=exit_app)],
@@ -79,15 +89,21 @@ def main():
     ############################################################################
     # Actually application container.
     ############################################################################
-    print(main_doc)
+    print(blueprints_doc)
     result = app.run()
 
     if result:
-        cli_package.main(package_radios.current_value)
+        blueprint_options = {}
+        for blueprint_name, blueprint_checkbox in blueprints.items():
+            if blueprint_checkbox.checked:
+                blueprint_handler = blueprint_handlers[blueprint_name]
+                blueprint_options[blueprint_name] = blueprint_handler(include=True)
+        print(blueprint_options)
+        return blueprint_options
     else:
         print("Aborted!")
         sys.exit(0)
 
 
 if __name__ == "__main__":
-    main()
+    handle_blueprints()

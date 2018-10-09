@@ -33,7 +33,7 @@ upload_pypi: readme_to_rst
 .PHONY : lint
 lint:             ## Run flake8 linter
 lint:
-	flake8 nr_pypackage
+	flake8 {{ package_name_safe }}
 
 .PHONY : run_server
 run_server:             ## Run flake8 linter

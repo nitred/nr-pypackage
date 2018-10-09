@@ -5,7 +5,7 @@ from pprint import pprint
 import click
 from nr_pypackage import package_creator
 
-from . import cli_blueprints
+from . import blueprints
 
 
 @click.command()
@@ -69,7 +69,7 @@ dry_run     : {dry_run}
 @click.option('--scm_url', type=str, prompt='URL of the SCM (e.g. github.com, gitlab.com)', help='URL of the SCM.', )
 @click.option('--scm_username', type=str, prompt='Username for the SCM (e.g. thor_bigguns)', help='Username used for the SCM.', )
 @click.option('--dry_run', type=bool, prompt='Do you want to do a dry run? (e.g. y/n)', help='Dry run.', )
-def package_flask_blueprints(**kwargs):
+def package_blueprints(**kwargs):
     """Main CLI endpoint to create a python flask package along with blueprints.
 
     How it works?
@@ -77,13 +77,8 @@ def package_flask_blueprints(**kwargs):
     * Then for each blueprint we obtain its options.
     * Then we render the package and the blueprints and write them to file.
     """
-    kwargs['package_type'] = 'package_flask_blueprints'
-    blueprint_options = {}
-    for blueprint_name, blueprint_func in cli_blueprints.BLUEPRINTS.items():
-        blueprint_include, blueprint_kwargs = blueprint_func()
-        if blueprint_include is True:
-            blueprint_options[blueprint_name] = blueprint_kwargs
-
+    kwargs['package_type'] = 'package_blueprints'
+    blueprint_options = blueprints.handle_blueprints()
     kwargs['blueprints'] = blueprint_options
 
     # Get confirmation from the user whether the details are correct.
@@ -121,8 +116,8 @@ def main(package_type):
         package_simple()
     elif package_type == 'package_flask':
         package_flask()
-    elif package_type == 'package_flask_blueprints':
-        package_flask_blueprints()
+    elif package_type == 'package_blueprints':
+        package_blueprints()
     else:
         raise NotImplementedError
 
