@@ -39,11 +39,8 @@ def ui_table():
         """Ctrl-C to quit."""
         event.app.exit(result=False)
 
-    def add_tables():
-        get_app().exit(result="add_tables")
-
-    def end_tables():
-        get_app().exit(result="end_tables")
+    def table_done():
+        get_app().exit(result="table_done")
 
     ############################################################################
     # TABLE DETAILS
@@ -69,8 +66,7 @@ def ui_table():
                     ),
                     VSplit(
                         children=[
-                            # Button('Add More Tables', handler=add_tables, width=40),
-                            Button('Done', handler=end_tables, width=80),
+                            Button('Done', handler=table_done, width=80),
                         ],
                     ),
                 ],
@@ -84,9 +80,9 @@ def ui_table():
                       key_bindings=bindings,
                       full_screen=False)
 
-    app_status = app.run()
+    table_status = app.run()
 
-    if not app_status:
+    if not table_status:
         abort()
 
-    return (app_status, table_name.text, column_names.text)
+    return (table_status, table_name.text, column_names.text)

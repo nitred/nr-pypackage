@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  {% if blueprints['auth']['include'] %}
+  {{ package_name }}-redis-s:
+    image: redis:latest
+    container_name: {{ package_name }}-redis-c
+    ports:
+      - '6379:6379'
+    networks:
+      - {{ package_name }}-n
+
+  {% endif %}
+  {% if blueprints['database']['include'] %}
+  {{ package_name }}-postgres-s:
+    image: postgres:10
+    container_name: {{ package_name }}-postgres-c
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB={{ package_name_safe }}
+    ports:
+      - '5433:5432'
+    networks:
+      - {{ package_name }}-n
+
+  {% endif %}
+
+networks:
+  {{ package_name }}-n:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.25.123.0/24

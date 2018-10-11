@@ -1,6 +1,6 @@
 """CLI entrypoint for creating entire python packages."""
 from builtins import input
-from pprint import pprint
+from pprint import pprint, pformat
 
 import click
 from nr_pypackage import package_creator

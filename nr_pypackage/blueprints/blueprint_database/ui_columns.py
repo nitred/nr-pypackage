@@ -10,6 +10,8 @@ from prompt_toolkit.application.current import get_app
 import sys
 from prompt_toolkit import prompt
 from copy import deepcopy
+from functools import partial
+from pprint import pprint, pformat
 
 
 def abort():
@@ -19,8 +21,11 @@ def abort():
 
 column_attributes = {
     'primary_key': [False, True],
-    'type': ['Integer', 'Float', 'String', 'Boolean', 'Unicode', 'DateTime'],
-    'unique': [False, True]
+    'type': ['Integer', 'Float', 'Boolean', 'DateTime',
+             'String(32)', 'String(128)', 'Unicode(32)', 'Unicode(128)',
+             'StringText', 'UnicodeText', ],
+    'unique': [False, True],
+    'nullable': [False, True],
 }
 
 column_attributes_default = {k: v[0] for k, v in column_attributes.items()}
@@ -48,16 +53,104 @@ def get_key_bindings():
     return bindings
 
 
+def update_label(column_details, column_details_labels, column_name, attr_key, attr_val, focus_obj):
+    # update column attr details
+    column_details[column_name][attr_key] = attr_val
+    # update column attr label
+    label = column_details_labels[column_name][attr_key]
+    label.text = f"{attr_key:20s}: {attr_val}"
+    # set focus back to the menu
+    get_app().layout.focus(focus_obj.menu)
+
+
+def get_column_menu_container(table_name, all_table_details, column_details, column_details_labels, column_details_container, bindings):
+    # all possible column attributes
+    all_column_attributes = {}
+    for attr_key, all_attr_vals in column_attributes.items():
+        if attr_key == "type":
+            for _table_name_, table_details in all_table_details.items():
+                if _table_name_ == table_name:
+                    continue
+
+                # Add all previous `table_name.table_column` as possible attribute values for columns of this table.
+                table_column_attrs = [f"{_table_name_}.{_column_name}" for _column_name in table_details['column_names']]
+
+                # Update all attr_vals with `table_name.table_column` to the existing default attribute values.
+                all_attr_vals += table_column_attrs
+
+        all_column_attributes[attr_key] = all_attr_vals
+
+    # Placeholder Container for the column update menu.
+    column_menu_container_body = TextArea(
+        text='',
+        multiline=True,
+        focusable=False,
+        read_only=True
+    )
+
+    class Focus(object):
+        def __init__(self):
+            self.menu = None
+
+    focus_obj = Focus()
+
+    column_menu_container = Frame(
+        body=MenuContainer(
+            key_bindings=bindings,
+            body=column_menu_container_body,
+            menu_items=[
+                MenuItem(
+                    text='EDIT COLUMN DETAILS',
+                    children=[
+                        MenuItem(
+                            text=column_name,
+                            children=[
+                                MenuItem(
+                                    text=attr_key,
+                                    children=[
+                                        MenuItem(
+                                            text=f"{attr_val}",
+                                            handler=partial(
+                                                update_label,
+                                                column_details=column_details,
+                                                column_details_labels=column_details_labels,
+                                                column_name=column_name,
+                                                attr_key=attr_key,
+                                                attr_val=attr_val,
+                                                focus_obj=focus_obj,
+                                            ),
+                                        )
+                                        for attr_val in all_column_attributes[attr_key]
+                                    ]
+                                )
+                                for attr_key, attr_label in column_attrs.items()
+                            ]
+                        )
+                        for column_name, column_attrs in column_details_labels.items()
+                    ]
+                )
+            ]
+        )
+    )
+
+    focus_obj.menu = column_menu_container
+
+    return column_details, column_menu_container_body, column_menu_container
+
+
 def get_column_details_container(column_names, column_details):
     # column names labels
     column_name_labels = {column_name: Label(text=column_name) for column_name in column_names}
     # column details labels
+    # column_details_labels = { 'col_name': {attr_key: Label(), ...} }
     column_details_labels = {
         column_name: {
-            attr_key: Label(text=f"{attr_key}: {attr_val}") for attr_key, attr_val in column_details[column_name].items()
+            attr_key: Label(text=f"{attr_key:20s}: {attr_val}")
+            for attr_key, attr_val in column_details[column_name].items()
         }
         for column_name in column_names
     }
+
     # container for representing column details properly
     column_details_container = HSplit(
         children=[
@@ -107,101 +200,12 @@ def ui_columns(table_name, all_table_details):
     column_name_labels, column_details_labels, column_details_container = get_column_details_container(column_names,
                                                                                                        column_details)
 
-    def generate_column_text():
-        from pprint import pformat
-        return pformat(column_details, width=40)
-
-    column_text_container = Frame(
-        TextArea(
-            text=generate_column_text(),
-            read_only=True,
-            focusable=False,
-        )
-    )
-
-    def update_column_text_container():
-        column_text_container.text = generate_column_text()
-
-    column_menu_container_body = TextArea(
-        text='',
-        multiline=True,
-        focusable=False,
-        read_only=True
-    )
-
-    def c1_pk_true():
-        get_app().layout.focus(column_menu_container)
-        column_data['col1']['primary_key'] = True
-        update_column_text_container()
-
-    def c1_pk_false():
-        get_app().layout.focus(column_menu_container)
-        column_data['col1']['primary_key'] = False
-        update_column_text_container()
-
-    def c2_pk_true():
-        get_app().layout.focus(column_menu_container)
-        column_data['col2']['primary_key'] = True
-        update_column_text_container()
-
-    def c2_pk_false():
-        get_app().layout.focus(column_menu_container)
-        column_data['col2']['primary_key'] = False
-        update_column_text_container()
-
-    column_menu_container = Frame(
-        body=MenuContainer(
-            key_bindings=bindings,
-            body=column_menu_container_body,
-            menu_items=[
-                MenuItem(
-                    text='EDIT COLUMN DETAILS',
-                    children=[
-                        MenuItem(
-                            text='col1',
-                            handler=None,
-                            children=[
-                                MenuItem(
-                                    text='primary_key',
-                                    handler=None,
-                                    children=[
-                                        MenuItem(
-                                            text='True',
-                                            handler=c1_pk_true,
-                                        ),
-                                        MenuItem(
-                                            text='False',
-                                            handler=c1_pk_false,
-                                        )
-                                    ]
-                                )
-                            ],
-                        ),
-                        MenuItem(
-                            text='col2',
-                            handler=None,
-                            children=[
-                                MenuItem(
-                                    text='primary_key',
-                                    handler=None,
-                                    children=[
-                                        MenuItem(
-                                            text='True',
-                                            handler=c2_pk_true,
-                                        ),
-                                        MenuItem(
-                                            text='False',
-                                            handler=c2_pk_false,
-                                        )
-                                    ]
-                                )
-                            ],
-                        ),
-                    ]
-                ),
-            ]
-        )
-    )
+    column_details, column_menu_container_body, column_menu_container = get_column_menu_container(table_name,
+                                                                                                  all_table_details,
+                                                                                                  column_details,
+                                                                                                  column_details_labels,
+                                                                                                  column_details_container,
+                                                                                                  bindings)
 
     root_container = VSplit(
         width=80,
@@ -209,7 +213,7 @@ def ui_columns(table_name, all_table_details):
             HSplit(
                 padding=1,
                 children=[
-                    column_text_container,
+                    column_details_container,
                     VSplit(
                         height=10,
                         children=[
@@ -233,11 +237,11 @@ def ui_columns(table_name, all_table_details):
                       key_bindings=bindings,
                       full_screen=False)
 
-    app.layout.focus(column_menu_container)
+    app.layout.focus(column_menu_container_body)
 
-    app_status = app.run()
+    table_status = app.run()
 
-    if not app_status:
+    if not table_status:
         abort()
 
-    return (app_status, table_name.text, column_names.text)
+    return table_status, column_details

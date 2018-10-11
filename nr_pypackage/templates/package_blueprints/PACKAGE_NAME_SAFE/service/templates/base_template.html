@@ -1,0 +1,21 @@
+{% raw %}
+<!DOCTYPE html>
+<html>
+
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="{{ url_for('static', filename='wing/wing.min.css')}}">
+            <link rel="stylesheet" href="{{ url_for('static', filename='wing/styles.css')}}">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>
+                {{ page_title }}
+            </title>
+        {% endblock %}
+    </head>
+
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+
+</html>
+{% endraw %}

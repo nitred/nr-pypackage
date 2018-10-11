@@ -1,5 +1,0 @@
-flask:
-  SECRET_KEY: "super-secret-password"
-  {% if blueprints['auth']['include'] %}
-  SESSION_TYPE: "redis"
-  {% endif %}

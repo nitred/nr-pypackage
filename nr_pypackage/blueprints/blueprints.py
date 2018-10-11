@@ -38,7 +38,7 @@ def handle_blueprints():
     blueprint_order = ['auth', 'database']
     blueprints = {
         'auth': Checkbox(text='Authentication against LDAP'),
-        'database': Checkbox(text='Databases'),
+        'database': Checkbox(text='Database'),
     }
     blueprint_checkboxes = []
     for bp in blueprint_order:
@@ -98,11 +98,15 @@ def handle_blueprints():
             if blueprint_checkbox.checked:
                 blueprint_handler = blueprint_handlers[blueprint_name]
                 blueprint_options[blueprint_name] = blueprint_handler(include=True)
-        print(blueprint_options)
+            else:
+                blueprint_options[blueprint_name] = {'include': False}
+
         return blueprint_options
     else:
         print("Aborted!")
         sys.exit(0)
+
+    return blueprint_options
 
 
 if __name__ == "__main__":
