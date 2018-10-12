@@ -4,7 +4,9 @@ from pprint import pformat, pprint
 
 import pandas as pd
 from flask import current_app, flash
+{% if blueprints['auth']['include'] %}
 from flask_login import current_user
+{% endif %}
 from {{ package_name_safe }}.service.database.{{ current_table_name_lower }} import {{ current_table_name_lower }}_api
 
 
@@ -63,6 +65,7 @@ def get_{{ current_table_name_lower }}_config():
     return current_app.config['app_config']['services']['{{ current_table_name_lower }}']
 
 
+{% if blueprints['auth']['include'] %}
 def is_user_permitted():
     """Is current user permitted."""
     {{ current_table_name_lower }}_config = get_{{ current_table_name_lower }}_config()
@@ -71,6 +74,12 @@ def is_user_permitted():
         return True
     else:
         return False
+{% else %}
+def is_user_permitted():
+    """No authentication."""
+    return True
+{% endif %}
+
 
 
 def get_dict_of_{{ current_table_name_lower }}s():

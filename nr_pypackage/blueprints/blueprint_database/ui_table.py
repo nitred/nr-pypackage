@@ -19,6 +19,8 @@ def abort():
 table_header = """
 --------------------------------------------------------------------------------
                                TABLE CREATION
+1. column_names have to contain a column named "id".
+2. "collectively unique columns" should contain more than one column name.
 --------------------------------------------------------------------------------
 """
 
@@ -45,8 +47,9 @@ def ui_table():
     ############################################################################
     # TABLE DETAILS
     ############################################################################
-    table_name = TextArea(prompt='table_name (lower-case)       : ', multiline=False)
+    table_name = TextArea(prompt='table_name                    : ', multiline=False)
     column_names = TextArea(prompt='column_names (comma separated): ', multiline=False)
+    unique_columns = TextArea(prompt='collectively unique columns   : ', multiline=False)
 
     root_container = VSplit(
         width=80,
@@ -61,6 +64,7 @@ def ui_table():
                             children=[
                                 table_name,
                                 column_names,
+                                unique_columns,
                             ]
                         ),
                     ),
@@ -85,4 +89,4 @@ def ui_table():
     if not table_status:
         abort()
 
-    return (table_status, table_name.text, column_names.text)
+    return (table_status, table_name.text, column_names.text, unique_columns.text)

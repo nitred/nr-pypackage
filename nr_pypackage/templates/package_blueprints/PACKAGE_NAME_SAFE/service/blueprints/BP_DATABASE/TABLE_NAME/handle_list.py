@@ -3,9 +3,9 @@ from pprint import pformat, pprint
 
 import pandas as pd
 from flask import current_app, flash
-from flask_login import current_user
 
 from . import utils
+import traceback
 
 
 def get_list_of_{{ current_table_name_lower }}s_as_div():
@@ -21,4 +21,5 @@ def get_list_of_{{ current_table_name_lower }}s_as_div():
     except Exception as ex:
         flash(f"Error get_list_of_{{ current_table_name_lower }}s_as_div()")
         flash("Exception: {}".format(str(ex)))
+        print(traceback.format_exc())
         return pd.DataFrame().to_html(table_id='dataframe')

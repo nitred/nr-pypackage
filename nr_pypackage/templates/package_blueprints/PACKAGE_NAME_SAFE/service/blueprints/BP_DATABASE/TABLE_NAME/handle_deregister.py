@@ -1,55 +1,50 @@
-"""Utils for consulate."""
+"""Utils for {{ current_table_name_lower }}s."""
 import logging
 from pprint import pformat, pprint
 
 import pandas as pd
 from flask import current_app, flash
-from flask_login import current_user
 
 from . import utils
-from pydagger.service.database import pipeline_api
+from {{ package_name_safe }}.service.database import {{ current_table_name_lower }}_api
+import traceback
 
 logger = logging.getLogger(__name__)
 
 
-def deregister_pipeline_in_database(id):
+def deregister_{{ current_table_name_lower }}_in_database({{ blueprints['database']['current_table'].column_names_as_args }}):
     try:
-        deregistered_pipeline = pipeline_api.deregister_pipeline(id=id)
-        return deregistered_pipeline
+        return {{ current_table_name_lower }}_api.deregister_{{ current_table_name_lower }}(
+            {% for column_name in blueprints['database']['current_table'].column_names %}
+            {{ column_name }}={{ column_name }},
+            {% endfor %}
+        )
     except Exception as ex:
-        flash(f"Error deregister_pipeline_in_database()")
-        flash("Exception: {}".format(str(ex)))
+        flash(f"Error deregister_{{ current_table_name_lower }}_in_database()")
+        flash(f"Exception: {str(ex)}")
+        print(traceback.format_exc())
         return False
 
 
-def deregister_pipeline(session_form_data):
-    """Deregister service based on form data."""
+def deregister_{{ current_table_name_lower }}(session_form_data):
+    """Register based on form data."""
     # Condition: User must be permitted.
     if not utils.is_user_permitted():
-        flash("Did not update service. Your user is not permitted to update new services!")
+        flash("Did not deregister service. Your user is not permitted to deregister new services!")
         return None
 
-    # Condition: id should exist in the services.
-    pipelines_dict = utils.get_pipelines()
-    if session_form_data.id not in pipelines_dict.keys():
-        flash(f"Did not deregister pipeline. Pipeline ID: \"{session_form_data.id}\" does not exist in the pipelines.")
-        return None
+    # Register.
+    deregistered_{{ current_table_name_lower }} = deregister_{{ current_table_name_lower }}_in_database(
+        {% for column_name in blueprints['database']['current_table'].column_names %}
+        {{ column_name }}=session_form_data.{{ column_name }},
+        {% endfor %}
+    )
 
-    # deregister.
-    deregistered_pipeline = deregister_pipeline_in_database(id=session_form_data.id)
-
-    pipelines_dict = utils.get_pipelines()
-    if deregistered_pipeline and session_form_data.id not in pipelines_dict.keys():
-        msg = (f"Successfully deregistered pipeline with Pipeline ID: \"{session_form_data.id}\"")
+    if deregistered_{{ current_table_name_lower }}:
+        msg = (f"Successfully deregistered {{ current_table_name }} with {{ current_table_name_lower }}.id: \"{deregistered_{{ current_table_name_lower }}.id}\"!")
         logger.info(msg)
         flash(msg)
-    elif deregistered_pipeline:
-        msg = (f"Deregistered the pipeline but data has been CORRUPTED! Please check data and contact devs!")
-        logger.error(msg)
-        flash(msg)
     else:
-        deregistered_pipeline
-        msg = (f"Did not deregister pipeline with Pipeline ID: \"{session_form_data.id}\". "
-               f"We assume a failure of registration. Please contact devs!")
+        msg = (f"Did not deregister {{ current_table_name }}!. Please check error message or contact devs!")
         logger.error(msg)
         flash(msg)

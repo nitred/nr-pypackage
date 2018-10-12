@@ -4,6 +4,7 @@ channels:
 dependencies:
 - python=3.6
 - pip:
+  - isort
   - flake8
   - autopep8
   - yapf

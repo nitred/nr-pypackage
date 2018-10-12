@@ -30,6 +30,11 @@ upload_pypi: readme_to_rst
 	python setup.py bdist_wheel --dist-dir dist && \
 	twine upload --skip-existing --repository pypi dist/*
 
+.PHONY : isort    # Run import sorter
+isort:
+isort:
+	isort --check-only --recursive {{ package_name_safe }}
+
 .PHONY : lint
 lint:             ## Run flake8 linter
 lint:

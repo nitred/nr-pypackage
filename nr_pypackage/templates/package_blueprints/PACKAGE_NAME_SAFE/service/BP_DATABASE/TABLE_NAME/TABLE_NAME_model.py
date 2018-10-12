@@ -22,3 +22,10 @@ class {{ blueprints['database']['current_table'].table_name }}(Base):
     {% for foreign_relationship in blueprints['database']['current_table'].foreign_relationships %}
     {{ foreign_relationship }}
     {% endfor %}
+
+    # Unique contraints.
+    __table_args__ = (
+        {% for unique_constraint in blueprints['database']['current_table'].unique_constraints %}
+        UniqueConstraint({{ unique_constraint }}),
+        {% endfor %}
+    )

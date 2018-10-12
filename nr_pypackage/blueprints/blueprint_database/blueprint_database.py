@@ -43,12 +43,14 @@ def get_prepared_table_details(all_table_details):
             'table_name': table_name,
             'table_name_lower': table_name.lower(),
             'column_names': table_dict['column_names'],
+            'unique_columns': table_dict['unique_columns'],
             'column_names_as_args': ", ".join([column_name for column_name in table_dict['column_names']]),
             'column_names_as_args_str': ", ".join([f"\'{column_name}\'" for column_name in table_dict['column_names']]),
             'column_details': table_dict['column_details'],
             'column_statements': [],
             'foreign_statements': set([]),
             'foreign_relationships': set([]),
+            'unique_constraints': set([]),
         }
         for table_name, table_dict in all_table_details.items()
     }
@@ -94,6 +96,13 @@ def get_prepared_table_details(all_table_details):
                                     f"nullable={column_dict.nullable})")
                 table_details[table_name].column_statements.append(column_statement)
 
+        ########################################################################
+        # UNIQUE CONSTRAINTS (once for one table)
+        ########################################################################
+        if table_dict['unique_columns']:
+            unique_constraint = ", ".join([f"\'{unique_column}\'" for unique_column in table_dict['unique_columns']])
+            table_details[table_name].unique_constraints.add(unique_constraint)
+
     pprint("TABLE DETAILS")
     pprint(table_details, width=120, compact=True)
     return table_details
@@ -111,7 +120,16 @@ def handle_database(include):
     ############################################################################
     all_table_details = {}
     while True:
-        (table_status, table_name, column_names) = ui_table()
+        (table_status, table_name, column_names, unique_columns) = ui_table()
+        column_names = [column_name.strip() for column_name in column_names.split(',')]
+        if unique_columns:
+            unique_columns = [unique_column.strip() for unique_column in unique_columns.split(',')]
+        else:
+            unique_columns = []
+        assert len(unique_columns) == 0 or len(unique_columns) > 1, (
+            f"Collective Unique Columns Error. There should be either no collective unique columns or there should be "
+            f"multiple unique columns, instead we found {len(unique_columns)} collective unique columns."
+        )
 
         if table_status:
             # If table_status is not False, that means we have some valid table details.
@@ -119,7 +137,8 @@ def handle_database(include):
             all_table_details[table_name] = {
                 'table_name': table_name,
                 'table_name_lower': table_name.lower(),
-                'column_names': [column_name.strip() for column_name in column_names.split(',')],
+                'column_names': column_names,
+                'unique_columns': unique_columns,
                 'column_details': None,
             }
 

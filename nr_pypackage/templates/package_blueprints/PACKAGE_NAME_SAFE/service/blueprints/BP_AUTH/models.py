@@ -1,10 +1,5 @@
 """Create a USER object or model. Also decorate a user_loader function."""
-raise NotImplementedError("""Function called `is_ldap_authenticated_user` has not been implemented.
-
-Please import or create a function called `is_ldap_authenticated_user` that accepts `username` and `password`
-as arguments and verifies them against an LDAPServer and returns a bool indicating if the user is authenticated.
-""")
-
+from common_python.contrib.auth import is_ldap_authenticated_user
 from .manager import auth_manager
 
 

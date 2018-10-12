@@ -4,15 +4,14 @@
 {% block body_form %}
     <h4>{{ page_heading }}</h4>
     <form action="{{ url_for_endpoint }}">
-        Pipeline ID (e.g. 1)
-        <input type="text" name="id" value="{{ id }}" style="width: 94%">
+{% endraw %}
+        {% for column_name in blueprints['database']['current_table'].column_names %}
+        {{ current_table_name }} {{ column_name }} (type: {{ blueprints['database']['current_table'].column_details[column_name].type }})
+        <input type="text" name="{{ column_name }}" value="{{ '{{' }} {{ column_name }} {{ '}}' }}" style="width: 94%">
 
-        Pipeline Name (e.g. data-cleaner)
-        <input type="text" name="name" value="{{ name }}" style="width: 94%">
+        {% endfor %}
 
-        Pipeline Tag (e.g. test, prod)
-        <input type="text" name="tag" value="{{ tag }}" style="width: 94%">
-
+{% raw %}
         <input type="hidden" name="submitted" value="submitted">
         <input type="submit">
     </form>

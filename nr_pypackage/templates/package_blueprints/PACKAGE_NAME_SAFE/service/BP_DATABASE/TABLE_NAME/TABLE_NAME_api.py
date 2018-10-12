@@ -29,21 +29,23 @@ def register_{{ current_table_name_lower }}({{ blueprints['database']['current_t
         return {{ current_table_name_lower }}
 
 
-def update_pipeline({{ blueprints['database']['current_table'].column_names_as_args }}):
+def update_{{ current_table_name_lower }}({{ blueprints['database']['current_table'].column_names_as_args }}):
     with ManagedSession() as session:
-        pipeline = pipeline_ops.update(
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.update(
             session=session,
             {% for column_name in blueprints['database']['current_table'].column_names %}
             {{ column_name }}={{ column_name }},
             {% endfor %}
         )
-        return pipeline
+        return {{ current_table_name_lower }}
 
 
-def deregister_pipeline(id):
+def deregister_{{ current_table_name_lower }}({{ blueprints['database']['current_table'].column_names_as_args }}):
     with ManagedSession() as session:
-        pipeline = pipeline_ops.delete(
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.delete(
             session=session,
-            id=id
+            {% for column_name in blueprints['database']['current_table'].column_names %}
+            {{ column_name }}={{ column_name }},
+            {% endfor %}
         )
-        return pipeline
+        return {{ current_table_name_lower }}

@@ -28,14 +28,16 @@ def index():
                            sub_pages=[
                                {'url': url_for('landing.index'), 'label': "Landing Page"},
                                {% for table_name, table_details in blueprints['database']['tables'].items() %}
-                               {'url': url_for('{{ table_details.table_name_lower }}.index'), 'label': "database {{ table_details.table_name_lower }}"},
+                               {'url': url_for('{{ table_details.table_name_lower }}.index'), 'label': "Manage {{ table_details.table_name }}s"},
                                {% endfor %}
                                {'url': url_for('landing.update_config'), 'label': "update config"},
                            ])
 
 
 @landing_handler.route('/update_config', methods=['GET'])
+{% if blueprints['auth']['include'] %}
 @login_required
+{% endif %}
 def update_config():
     """Update app config."""
     config_filename = current_app.config['app_config']['config_filename']

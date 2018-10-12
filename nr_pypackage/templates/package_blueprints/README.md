@@ -2,39 +2,43 @@
 Long description of your project.
 
 
-## Current Stable Version
+#### Current Stable Version
 ```
 0.1.0
 ```
 
-## Installation
-### pip
+
+# Development: First Time Setup
+
+* We require Anaconda3, which can be downloaded from their website.
+* Once Anaconda3 has been downloaded and installed, make sure that the `conda` command is available in the `$PATH`.
+* Create an Anaconda3 environment for this project - run the following command:
+```
+make recreate_pyenv
+```
+* Activate the environment that has just been created - run the following command:
+```
+source activate-env.sh
+```
+
+
+# Installation
+
+#### Install via pip
 ```
 pip install {{ package_name }}
 ```
 
-### Development Installation
-* Clone the project.
-* Install in Anaconda3 environment
-* This command creates a python environment and then activates it.
-```
-$ make recreate_pyenv && chmod +x activate-env.sh && . activate-env.sh
-```
-* Now install the application in editable mode and you are ready to start development
-```
-$ pip install -e .
-```
 
-## Test
+# Test
 To run the tests:
 ```
 make test
 ```
 
-## Usage
 
-
-## Examples
+# Examples
+To run an example:
 ```
 $ python examples/simple.py
 ```
