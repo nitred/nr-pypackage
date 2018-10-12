@@ -8,6 +8,7 @@ from flask import current_app, flash
 from flask_login import current_user
 {% endif %}
 from {{ package_name_safe }}.service.database.{{ current_table_name_lower }} import {{ current_table_name_lower }}_api
+import traceback
 
 
 ################################################################################
@@ -47,17 +48,50 @@ class SessionFormData(object):
         return self.kwargs
 
 
+
 def generate_session_form_data_from_request(request):
-    """Generate or populate a SessionFormData from request.form."""
-    args = request.args.to_dict()
-    print('generate_session_form_data_from_request: args              : \n{}'.format(pformat(args)))
+    """Generate or populate a SessionFormData from request.form.
+
+    * If the form is just a regular form with plain-text data and form method is
+     'GET' then request.args gets populated.
+    * If the form is just a regular form with plain-text data and form method is
+     'POST' then request.form gets populated.
+    * If the form consists of inputs of `type=file` then request.files also gets
+      populated, but other plain-text data goes into request.args or
+      request.forms correspondingly.
+    * THEREFORE we try to handle all three cases at one go.
+    """
+    plaintext_args = {}
+    # Obtain plaintext_args in the case of "GET"
+    plaintext_args.update(request.args.to_dict())
+    # Obtain plaintext_args in the case of "POST"
+    plaintext_args.update(request.form.to_dict())
+
+    # Parse plain text.
     try:
-        session_form_data = SessionFormData(**args)
-        print('generate_session_form_data_from_request: session_form_data : \n{}'.format(pformat(session_form_data._asdict())))
-        return session_form_data
+        session_form_data = SessionFormData(**plaintext_args)
+        print('generate_session_form_data_from_request (plaintext): session_form_data : \n{}'.format(pformat(session_form_data._asdict())))
     except Exception as ex:
-        flash("Exception occured converting & validating form. Please check form details again.")
+        flash(f"Exception occured converting & validating form plaintext. Please check form details again.")
+        flash(f"Exception: {str(ex)}")
+        print(traceback.format_exc())
         return SessionFormData()
+
+    # Parse form files.
+    files = request.files.to_dict()
+    for file_name, file_storage in files.items():
+        try:
+            print(f"generate_session_form_data_from_request (files): {file_name}")
+            file_contents = file_storage.read().decode()
+            print(f"file_contents: text: '{file_contents[:10]} ...' len: {len(file_contents)}")
+            setattr(session_form_data, file_name, file_contents)
+        except Exception as ex:
+            flash(f"Exception occured converting & validating form files. Please check form details again.")
+            flash(f"Exception: {str(ex)}")
+            print(traceback.format_exc())
+            return SessionFormData()
+
+    return session_form_data
 
 
 def get_{{ current_table_name_lower }}_config():

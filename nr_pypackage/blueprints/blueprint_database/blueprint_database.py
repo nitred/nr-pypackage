@@ -103,8 +103,8 @@ def get_prepared_table_details(all_table_details):
             unique_constraint = ", ".join([f"\'{unique_column}\'" for unique_column in table_dict['unique_columns']])
             table_details[table_name].unique_constraints.add(unique_constraint)
 
-    pprint("TABLE DETAILS")
-    pprint(table_details, width=120, compact=True)
+    # pprint("TABLE DETAILS")
+    # pprint(table_details, width=120, compact=True)
     return table_details
 
 

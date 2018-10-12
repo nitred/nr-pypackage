@@ -42,7 +42,7 @@ def index():
                            ])
 
 
-@{{ current_table_name_lower }}_handler.route('/list', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/list', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -66,7 +66,7 @@ def list():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/register', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/register', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -91,7 +91,7 @@ def register():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/update', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/update', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -116,7 +116,7 @@ def update():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/deregister', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/deregister', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
