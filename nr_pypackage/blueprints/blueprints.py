@@ -89,7 +89,7 @@ def handle_blueprints():
     ############################################################################
     # Actually application container.
     ############################################################################
-    print(blueprints_doc)
+    # print(blueprints_doc)
     result = app.run()
 
     if result:
