@@ -23,9 +23,10 @@ column_attributes = {
     'primary_key': [False, True],
     'type': ['Integer', 'Float', 'Boolean', 'DateTime',
              'String(32)', 'String(128)', 'Unicode(32)', 'Unicode(128)',
-             'StringText', 'UnicodeText', ],
+             'StringText', 'UnicodeText', 'LargeBinary'],
     'unique': [False, True],
     'nullable': [False, True],
+    'type_ui': ['text', 'file'],
 }
 
 column_attributes_default = {k: v[0] for k, v in column_attributes.items()}

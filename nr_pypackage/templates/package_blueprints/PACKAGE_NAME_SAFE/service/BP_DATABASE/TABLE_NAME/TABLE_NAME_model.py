@@ -1,5 +1,5 @@
 """{{ current_table_name_lower }} database model."""
-from sqlalchemy import Column, String, Integer, ForeignKey, UnicodeText, UniqueConstraint, Boolean, Float
+from sqlalchemy import Column, String, Integer, ForeignKey, UnicodeText, UniqueConstraint, Boolean, Float, LargeBinary
 from sqlalchemy.orm import relationship
 
 from .. import Base

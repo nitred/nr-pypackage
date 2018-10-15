@@ -63,7 +63,10 @@ def get_prepared_table_details(all_table_details):
             ####################################################################
             # FOREIGN KEY (on current table)
             ####################################################################
-            if '.' in column_dict.type:
+            if '.' in column_dict.type and column_dict.type_ui != 'text':
+                raise ValueError(f"table: {table_name} column: {column_name} is a foreign key and is expected to have "
+                                 f"type_ui of 'text' but instead found {column_dict.type_ui}.")
+            elif '.' in column_dict.type:
                 # Column(Integer, ForeignKey('pipeline.id'), nullable=False)
                 foreign_table = column_dict.type.split('.')[0]
                 foreign_table_lower = foreign_table.lower()

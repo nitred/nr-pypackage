@@ -7,6 +7,9 @@ from flask import current_app, flash
 from . import utils
 import traceback
 
+# To make pandas display the entire row.
+pd.set_option('display.max_colwidth', -1)
+
 
 def get_list_of_{{ current_table_name_lower }}s_as_div():
     """Return dataframe as html."""
@@ -17,7 +20,7 @@ def get_list_of_{{ current_table_name_lower }}s_as_div():
             df = pd.DataFrame.from_dict({{ current_table_name_lower }}s_dict, orient='index')[column_order]
         else:
             df = pd.DataFrame(columns=column_order)
-        return df.to_html(table_id='dataframe', index=False)
+        return df.to_html(table_id='dataframe', index=False, escape=False)
     except Exception as ex:
         flash(f"Error get_list_of_{{ current_table_name_lower }}s_as_div()")
         flash("Exception: {}".format(str(ex)))

@@ -9,6 +9,7 @@ from flask_login import current_user
 {% endif %}
 from {{ package_name_safe }}.service.database.{{ current_table_name_lower }} import {{ current_table_name_lower }}_api
 import traceback
+import base64
 
 
 ################################################################################
@@ -82,8 +83,8 @@ def generate_session_form_data_from_request(request):
     for file_name, file_storage in files.items():
         try:
             print(f"generate_session_form_data_from_request (files): {file_name}")
-            file_contents = file_storage.read().decode()
-            print(f"file_contents: text: '{file_contents[:10]} ...' len: {len(file_contents)}")
+            file_contents = file_storage.read()
+            print(f"file_contents: text: '{file_contents[:20]} ...' len: {len(file_contents)}")
             setattr(session_form_data, file_name, file_contents)
         except Exception as ex:
             flash(f"Exception occured converting & validating form files. Please check form details again.")
@@ -115,15 +116,20 @@ def is_user_permitted():
 {% endif %}
 
 
-
 def get_dict_of_{{ current_table_name_lower }}s():
     """Get {{ current_table_name_lower }} from database."""
     try:
         {{ current_table_name_lower }}_objs = {{ current_table_name_lower }}_api.get_{{ current_table_name_lower }}s()
         {{ current_table_name_lower }}_dict = {
             {{ current_table_name_lower }}.id: {
-                {% for column_name in blueprints['database']['current_table'].column_names %}
+                {% for column_name, column_dict in blueprints['database']['current_table'].column_details.items() %}
+                {% if column_dict.type_ui == "file" %}
+                '{{ column_name }}': (f'<a href="data:application/octet-stream;charset=utf-16le;base64,'
+                                      f'{base64.b64encode({{ current_table_name_lower }}.{{ column_name }}).decode()}"'
+                                      f'download="{{ '{' }}{{ current_table_name_lower }}.id}_{{ current_table_name_lower }}_{{ column_name }}">Download</a>'),
+                {% else %}
                 '{{ column_name }}': {{ current_table_name_lower }}.{{ column_name }},
+                {% endif %}
                 {% endfor %}
             }
             for {{ current_table_name_lower }} in {{ current_table_name_lower }}_objs
