@@ -49,7 +49,6 @@ class SessionFormData(object):
         return self.kwargs
 
 
-
 def generate_session_form_data_from_request(request):
     """Generate or populate a SessionFormData from request.form.
 

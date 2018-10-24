@@ -27,6 +27,8 @@ column_attributes = {
     'unique': [False, True],
     'nullable': [False, True],
     'type_ui': ['text', 'file'],
+    'load_parent_on_self': ['eager', 'lazy'],
+    'load_self_on_parent': ['lazy', 'eager'],
 }
 
 column_attributes_default = {k: v[0] for k, v in column_attributes.items()}

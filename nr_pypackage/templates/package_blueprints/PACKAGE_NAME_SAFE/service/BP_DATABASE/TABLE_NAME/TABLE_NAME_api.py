@@ -17,35 +17,20 @@ def get_{{ current_table_name_lower }}(**kwargs):
         return {{ current_table_name_lower }}
 
 
-def register_{{ current_table_name_lower }}({{ blueprints['database']['current_table'].column_names_as_args }}):
+def register_{{ current_table_name_lower }}(**kwargs):
     """Register object."""
     with ManagedSession() as session:
-        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.insert(
-            session=session,
-            {% for column_name in blueprints['database']['current_table'].column_names %}
-            {{ column_name }}={{ column_name }},
-            {% endfor %}
-        )
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.insert(session=session, **kwargs)
         return {{ current_table_name_lower }}
 
 
-def update_{{ current_table_name_lower }}({{ blueprints['database']['current_table'].column_names_as_args }}):
+def update_{{ current_table_name_lower }}(id, **kwargs):
     with ManagedSession() as session:
-        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.update(
-            session=session,
-            {% for column_name in blueprints['database']['current_table'].column_names %}
-            {{ column_name }}={{ column_name }},
-            {% endfor %}
-        )
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.update(session, id, **kwargs)
         return {{ current_table_name_lower }}
 
 
-def deregister_{{ current_table_name_lower }}({{ blueprints['database']['current_table'].column_names_as_args }}):
+def deregister_{{ current_table_name_lower }}(id, **kwargs):
     with ManagedSession() as session:
-        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.delete(
-            session=session,
-            {% for column_name in blueprints['database']['current_table'].column_names %}
-            {{ column_name }}={{ column_name }},
-            {% endfor %}
-        )
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.delete(session, id, **kwargs)
         return {{ current_table_name_lower }}

@@ -48,6 +48,7 @@ def get_prepared_table_details(all_table_details):
             'column_names_as_args_str': ", ".join([f"\'{column_name}\'" for column_name in table_dict['column_names']]),
             'column_details': table_dict['column_details'],
             'column_statements': [],
+            'foreign_tables': set([]),
             'foreign_statements': set([]),
             'foreign_relationships': set([]),
             'unique_constraints': set([]),
@@ -69,13 +70,12 @@ def get_prepared_table_details(all_table_details):
             elif '.' in column_dict.type:
                 # Column(Integer, ForeignKey('pipeline.id'), nullable=False)
                 foreign_table = column_dict.type.split('.')[0]
-                foreign_table_lower = foreign_table.lower()
                 foreign_column = column_dict.type.split('.')[1]
                 foreign_type = table_details[foreign_table]['column_details'][foreign_column]['type']
 
                 foreign_statement = (f"{column_name} = "
                                      f"Column({foreign_type}, "
-                                     f"ForeignKey('{foreign_table_lower}.{foreign_column}'), "
+                                     f"ForeignKey('{foreign_table.lower()}.{foreign_column}'), "
                                      f"primary_key={column_dict.primary_key}, "
                                      f"unique={column_dict.unique}, "
                                      f"nullable={column_dict.nullable})")
@@ -83,10 +83,20 @@ def get_prepared_table_details(all_table_details):
                 table_details[table_name].foreign_statements.add(foreign_statement)
 
                 ################################################################
+                # FOREIGN RELATIONSHIP (on current table)
+                ################################################################
+                lazy = 'select' if column_dict['load_parent_on_self'] == "lazy" else 'joined'
+                foreign_relationship = (f"{foreign_table.lower()} = relationship('{foreign_table}', back_populates='{table_name.lower()}s', lazy='{lazy}')")
+                table_details[table_name].foreign_relationships.add(foreign_relationship)
+
+                ################################################################
                 # FOREIGN RELATIONSHIP (on foreign table)
                 ################################################################
-                foreign_relationship = (f"{table_name.lower()}s = relationship('{table_name}')")
+                lazy = 'select' if column_dict['load_self_on_parent'] == "lazy" else 'joined'
+                foreign_relationship = (f"{table_name.lower()}s = relationship('{table_name}', back_populates='{foreign_table.lower()}', lazy='{lazy}')")
                 table_details[foreign_table].foreign_relationships.add(foreign_relationship)
+
+                table_details[table_name].foreign_tables.add(foreign_table)
 
             ####################################################################
             # COLUMN
