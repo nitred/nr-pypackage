@@ -1,5 +1,5 @@
 """{{ current_table_name_lower }} database model."""
-from sqlalchemy import Column, String, Integer, ForeignKey, UnicodeText, UniqueConstraint, Boolean, Float
+from sqlalchemy import Column, String, Integer, ForeignKey, UnicodeText, UniqueConstraint, Boolean, Float, LargeBinary
 from sqlalchemy.orm import relationship
 
 from .. import Base
@@ -29,3 +29,12 @@ class {{ blueprints['database']['current_table'].table_name }}(Base):
         UniqueConstraint({{ unique_constraint }}),
         {% endfor %}
     )
+
+    def to_dict(self):
+        """Represent table row as dict."""
+        row_dict = self.__dict__
+        row_dict.pop('_sa_instance_state')
+        {% for foreign_table in blueprints['database']['current_table'].foreign_tables %}
+        row_dict.pop('{{ foreign_table.lower() }}')
+        {% endfor %}
+        return row_dict

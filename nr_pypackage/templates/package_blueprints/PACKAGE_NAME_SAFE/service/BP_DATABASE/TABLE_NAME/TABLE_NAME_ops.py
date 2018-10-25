@@ -36,7 +36,7 @@ def insert(session, **kwargs):
 
 def update(session, id, **kwargs):
     """Update {{ current_table_name_lower }}."""
-    {{ current_table_name_lower }} = select_one(session, id=id)
+    {{ current_table_name_lower }} = select_one(session, id)
     for k, v in kwargs.items():
         setattr({{ current_table_name_lower }}, k, v)
     session.add({{ current_table_name_lower }})
@@ -45,6 +45,6 @@ def update(session, id, **kwargs):
 
 def delete(session, id, **kwargs):
     """Delete {{ current_table_name_lower }}."""
-    {{ current_table_name_lower }} = select_one(session, id=id)
+    {{ current_table_name_lower }} = select_one(session, id)
     session.delete({{ current_table_name_lower }})
     return {{ current_table_name_lower }}

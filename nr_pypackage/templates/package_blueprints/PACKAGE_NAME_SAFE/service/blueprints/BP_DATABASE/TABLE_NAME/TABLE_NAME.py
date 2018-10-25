@@ -8,7 +8,8 @@ from flask import (Blueprint, Markup, flash, redirect, render_template,
 from flask_login import login_required
 {% endif %}
 
-
+from flask_restful import Api
+from .{{ current_table_name_lower }}_api import {{ current_table_name }}API
 from . import utils, handle_list, handle_register, handle_update, handle_deregister
 
 
@@ -42,7 +43,7 @@ def index():
                            ])
 
 
-@{{ current_table_name_lower }}_handler.route('/list', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/list', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -66,7 +67,7 @@ def list():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/register', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/register', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -91,7 +92,7 @@ def register():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/update', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/update', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -116,7 +117,7 @@ def update():
                            **session_form_data.__dict__)
 
 
-@{{ current_table_name_lower }}_handler.route('/deregister', methods=['GET'])
+@{{ current_table_name_lower }}_handler.route('/deregister', methods=['GET', 'POST'])
 {% if blueprints['auth']['include'] %}
 @login_required
 {% endif %}
@@ -139,3 +140,8 @@ def deregister():
                            url_for_endpoint=url_for('{{ current_table_name_lower }}.deregister'),
                            df_html=Markup(df_html),
                            **session_form_data.__dict__)
+
+
+# Register Restful Endpoints
+api = Api({{ current_table_name_lower }}_handler)
+api.add_resource({{ current_table_name }}API, '/api', endpoint='api')

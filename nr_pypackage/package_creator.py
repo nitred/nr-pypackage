@@ -143,7 +143,7 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_ty
                     template_kwargs['blueprints']['database']['current_table'] = bp_tables[table_name]
                     template_kwargs['current_table_name'] = table_name
                     template_kwargs['current_table_name_lower'] = table_name.lower()
-                    print(f"rendering file: {file_path_template}")
+                    # print(f"rendering file: {file_path_template}")
                     rendered_file = get_rendered_file(file_path_template, template_kwargs)
                     # Remove current_table from template_kwargs once rendering is done.
                     template_kwargs['blueprints']['database'].pop('current_table', None)
@@ -161,7 +161,7 @@ def get_generator_of_template_filenames_and_renders(CWD, PACKAGE_DIR, package_ty
                                                               })
                     yield (file_path_package, rendered_file)
             else:
-                print(f"rendering file: {file_path_template}")
+                # print(f"rendering file: {file_path_template}")
                 rendered_file = get_rendered_file(file_path_template, template_kwargs)
                 file_path_relative = os.path.relpath(file_path_template, TEMPLATES_DIR)
                 file_path_package = get_file_path_package(package_dir=PACKAGE_DIR,
