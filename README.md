@@ -23,7 +23,7 @@ This repository is Python 3 compatible only.
 
 ## Current Stable Version
 ```
-0.3.0.rc3
+0.3.0.rc5
 ```
 
 ## Installation
