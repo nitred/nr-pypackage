@@ -23,13 +23,13 @@ This repository is Python 3 compatible only.
 
 ## Current Stable Version
 ```
-0.3.0.rc5
+0.3.0
 ```
 
 ## Installation
 ### pip
 ```
-pip install nr-pypackage==0.3.0.rc3 --user --upgrade
+pip install nr-pypackage==0.3.0 --user --upgrade
 ```
 
 ### Development Installation
