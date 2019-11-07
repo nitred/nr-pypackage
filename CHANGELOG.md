@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 
-## 0.3.0.rc5 - 2019-07-30
+## 0.3.0.rc5 - 2019-07-30 to 2019-11-07
+- fixed dependencies
 - deprecated package_flask (Simple Flask App) which now comes under package_blueprints.
 
 ## 0.3.0.rc1 rc2 rc3 - 2018-10-07 to 2018-10-25
