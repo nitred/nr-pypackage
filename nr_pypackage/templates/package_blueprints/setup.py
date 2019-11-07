@@ -18,25 +18,26 @@ def get_version():
                          version_file.read()).group('version')
 
 
-install_requires = ['future',
-                    'Flask',
-                    'Flask-restful',
-                    {% if blueprints['auth']['include'] %}
-                    'Flask-Login',
-                    'Flask-Session',
-                    'Flask-WTF',
-                    'redis',
-                    'ldap3',
-                    {% endif %}
-                    {% if blueprints['database']['include'] %}
-                    'Flask-SQLAlchemy',
-                    'psycopg2',
-                    'pandas',
-                    {% endif %}
-                    'nr-common',
-                    'gunicorn',
-                    'gevent',
-                    'docker-compose']
+install_requires = [
+    "Flask>=1.1.1,<1.2",
+    "Flask-restful==0.3.7",
+    "gunicorn>=19.9.0,<19.10",
+    "gevent==1.4.0",
+    {% if blueprints['auth']['include'] %}
+    "Flask-Login==0.4.1",
+    "Flask-Session==0.3.1",
+    "Flask-WTF==0.14.2",
+    "redis>=3.3.7,<3.4",
+    "ldap3>=2.6,<2.7",
+    {% endif %}
+    {% if blueprints['database']['include'] %}
+    "Flask-SQLAlchemy>=2.4.0,<2.5",
+    "psycopg2-binary>=2.8.2,<2.9",
+    "pandas==0.23.4",
+    {% endif %}
+    "nr-common",
+    "docker-compose",
+]
 
 
 test_requires = ['pytest', 'pytest-sugar', 'pytest-asyncio', 'pytest-cov', ]

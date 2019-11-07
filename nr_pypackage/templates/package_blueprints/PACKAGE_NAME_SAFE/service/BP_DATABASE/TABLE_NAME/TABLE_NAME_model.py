@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql.json import JSONB as Postgres_JSONB
 from sqlalchemy import Text as StringText
 from sqlalchemy import (Column, String, Unicode, Integer, ForeignKey,
                         UnicodeText, UniqueConstraint, Boolean, Float, LargeBinary,
-                        DateTime)
+                        DateTime, TIMESTAMP)
 
 from sqlalchemy.orm import relationship
 

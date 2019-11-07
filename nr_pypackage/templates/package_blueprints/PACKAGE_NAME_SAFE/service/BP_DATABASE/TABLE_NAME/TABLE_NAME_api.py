@@ -26,11 +26,11 @@ def register_{{ current_table_name_lower }}(**kwargs):
 
 def update_{{ current_table_name_lower }}(id, **kwargs):
     with ManagedSession() as session:
-        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.update(session, id, **kwargs)
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.update(session, id=id, **kwargs)
         return {{ current_table_name_lower }}
 
 
 def deregister_{{ current_table_name_lower }}(id, **kwargs):
     with ManagedSession() as session:
-        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.delete(session, id, **kwargs)
+        {{ current_table_name_lower }} = {{ current_table_name_lower }}_ops.delete(session, id=id, **kwargs)
         return {{ current_table_name_lower }}

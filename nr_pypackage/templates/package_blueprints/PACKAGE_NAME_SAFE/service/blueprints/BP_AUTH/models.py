@@ -1,11 +1,24 @@
 """Create a USER object or model. Also decorate a user_loader function."""
-raise NotImplementedError("""Function called `is_ldap_authenticated_user` has not been implemented.
-
-Please import or create a function called `is_ldap_authenticated_user` that accepts `username` and `password`
-as arguments and verifies them against an LDAPServer and returns a bool indicating if the user is authenticated.
-""")
-
+import logging
+from flask import flash
 from .manager import auth_manager
+
+
+logger = logging.getLogger(__name__)
+
+
+def is_ldap_authenticated_user(username, password):
+    msg = (
+        f"Using placeholder `admin` credentials. Please change the `is_ldap_authenticated_user` "
+        f"method before moving to production."
+    )
+    logger.warning(msg)
+    flash(msg)
+
+    if username == "admin" and password == "admin123":
+        return True
+    else:
+        return False
 
 
 class LDAPUser(object):

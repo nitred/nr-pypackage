@@ -2,15 +2,8 @@ name: {{ package_name }}
 channels:
   - defaults
 dependencies:
-- python=3.6
+- python=3.7
 - pip:
-  - isort
-  - flake8
-  - autopep8
-  - yapf
-  - cython
-  - future
   - twine
-  - m2r
   - -r requirements.txt
   - -e .
